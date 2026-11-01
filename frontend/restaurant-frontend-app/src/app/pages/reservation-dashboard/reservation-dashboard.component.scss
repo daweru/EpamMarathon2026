@@ -1,5 +1,11 @@
 @use 'app/shared/styles/abstracts/colors' as color;
 
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f7f7ec;
+}
+
 .subheading {
   display: flex;
   align-items: center;

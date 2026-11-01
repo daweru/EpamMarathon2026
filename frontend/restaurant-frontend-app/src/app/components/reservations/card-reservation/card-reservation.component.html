@@ -34,12 +34,26 @@
   }
 
   <div class="details-wrapper">
-    <div class="details-line with-table">
+    <div class="details-line with-table reservation-address">
       <div class="details">
         <img class="line-icon" src="assets/svg/location-green.svg" alt="" aria-hidden="true" />
 
         {{ r().locationAddress }}
       </div>
+
+      @if (
+        role() === Roles.CUSTOMER &&
+        r().status === ReservationStatusCustomer.Reserved &&
+        r().guestCount >= 2
+      ) {
+        <button
+          type="button"
+          class="button button--secondary button--small invite-guests-button"
+          (click)="openInviteModal()"
+        >
+          Invite Guests
+        </button>
+      }
 
       @if (role() === Roles.WAITER) {
         <div class="change-table">
@@ -55,11 +69,18 @@
       }
     </div>
 
-    <div class="details-line">
+    <div class="details-line reservation-date">
       <span class="details">
         <img class="line-icon" src="assets/svg/calendar-green.svg" alt="" aria-hidden="true" />
 
         {{ r().startTime | date: 'mediumDate' }}
+      </span>
+
+      <span class="details">
+        <img class="line-icon" src="assets/svg/people-green.svg" alt="" aria-hidden="true" />
+
+        {{ displayedGuestCount() }}
+        {{ displayedGuestCount() === 1 ? 'Guest' : 'Guests' }}
       </span>
 
       @if (role() === Roles.WAITER && preOrderItemCount() > 0) {
@@ -71,9 +92,9 @@
       <span class="details">
         <img class="line-icon" src="assets/svg/clock-green.svg" alt="" aria-hidden="true" />
 
-        {{ r().startTime | date: 'shortTime' }}
+        {{ r().startTime | date: 'HH:mm' }}
         –
-        {{ r().endTime | date: 'shortTime' }}
+        {{ r().endTime | date: 'HH:mm' }}
       </span>
     </div>
 
@@ -97,14 +118,6 @@
       </div>
     }
 
-    <div class="details-line">
-      <span class="details">
-        <img class="line-icon" src="assets/svg/people-green.svg" alt="" aria-hidden="true" />
-
-        {{ displayedGuestCount() }}
-        {{ displayedGuestCount() === 1 ? 'Guest' : 'Guests' }}
-      </span>
-    </div>
   </div>
 
   <div class="actions">
@@ -225,6 +238,14 @@
     }
   </div>
 </li>
+
+@if (showInviteModal()) {
+  <app-reservation-invite-modal
+    [reservation]="r()"
+    [inviteOnly]="true"
+    (closed)="closeInviteModal()"
+  />
+}
 
 @if (showWaiterOrderModal()) {
   <app-place-order-waiter

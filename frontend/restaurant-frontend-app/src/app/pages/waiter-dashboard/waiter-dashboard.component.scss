@@ -102,3 +102,31 @@
     font-size: 0.8rem;
   }
 }
+
+@media (max-width: 768px) {
+  .filtration {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+
+  .custom-selects {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .filter {
+    flex: 1 1 calc(50% - 6px);
+    min-width: 0;
+    width: auto;
+  }
+
+  .btn-add-reservation {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .number-reservations {
+    padding: 16px 16px 0;
+  }
+}

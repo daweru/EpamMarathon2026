@@ -17,6 +17,8 @@
 
   @media (max-width: 768px) {
     min-height: auto;
+    flex-direction: column;
+    gap: 0;
   }
 }
 
@@ -57,7 +59,13 @@
   background: linear-gradient(180deg, color.$neutral-0 0%,color.$bg-yellow 100%);
 
   @media (max-width: 768px) {
+    position: static;
     width: 100%;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 560px) {
+    padding: 1rem;
   }
 }
 
@@ -110,8 +118,6 @@
   gap: 1rem;
   margin-top: 1.5rem;
 }
-
-
 
 .reviews-section {
   margin: 0 2.5rem;
@@ -393,4 +399,30 @@
   height: 32px;
   line-height: 32px;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .reviews-row {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .restaurant-address {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+  }
+
+  .restaurant-info__address-rating {
+    gap: 0.75rem;
+  }
+
+  .restaurant-info__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .reviews-section {
+    margin: 0 1rem;
+  }
 }

@@ -36,8 +36,11 @@
         left: 0;
         width: 100vw;
         height: 100vh;
+        height: 100dvh;
         background-color: color.$neutral-0;
         padding: 16px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         z-index: 9999;
         box-sizing: border-box;
@@ -250,6 +253,12 @@
   font-size: 24px;
   cursor: pointer;
   display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
 
   @media (max-width: 768px) {
     display: block;
@@ -299,6 +308,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 15px color.$shadow;
   width: 320px;
+  max-width: calc(100vw - 32px);
   max-height: 400px;
   overflow-y: auto;
   z-index: 1000;

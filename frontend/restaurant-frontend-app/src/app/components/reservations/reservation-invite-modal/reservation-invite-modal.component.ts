@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Reservation } from '@app/models/reservations/reservation.model';
+import { Reservation, ReservationCustomer } from '@app/models/reservations/reservation.model';
 import { GuestInviteService } from '@app/services/reservation/guest-invite.service';
 import { ToastService } from '@app/services/toast/toast.service';
 import { ModalComponent } from '@app/shared/custom-components/modal/modal.component';
@@ -32,7 +32,10 @@ export class ReservationInviteModalComponent implements OnInit {
   private readonly guestInviteService = inject(GuestInviteService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly reservation = input.required<Reservation>();
+  readonly reservation = input.required<
+    Pick<Reservation | ReservationCustomer, 'id' | 'guestCount' | 'locationAddress' | 'startTime' | 'endTime'>
+  >();
+  readonly inviteOnly = input(false);
 
   readonly closed = output<void>();
 

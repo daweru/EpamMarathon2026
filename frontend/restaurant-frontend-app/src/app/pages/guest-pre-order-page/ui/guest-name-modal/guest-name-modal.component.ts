@@ -22,7 +22,14 @@ export class GuestNameModalComponent {
     readonly touched = signal(false);
 
     readonly trimmed = computed(() => this.name().trim());
-    readonly valid = computed(() => this.trimmed().length > 0);
+    readonly tooLong = computed(() => this.trimmed().length > 9);
+    readonly hasInvalidCharacters = computed(() => !/^[A-Za-z .'-]*$/.test(this.trimmed()));
+    readonly valid = computed(
+        () =>
+            this.trimmed().length > 0 &&
+            !this.tooLong() &&
+            !this.hasInvalidCharacters()
+    );
 
     submit() {
         this.touched.set(true);

@@ -8,6 +8,7 @@ import {
   ReservationStatusCustomer,
 } from '@app/models/reservations/reservation.model';
 import { GroupOrdersService } from '@app/services/group-orders/group-orders.service';
+import { GuestInviteService } from '@app/services/reservation/guest-invite.service';
 import { GroupOrderPageComponent } from '@app/pages/group-order-page/group-order-page.component';
 import { ToastService } from '@app/services/toast/toast.service';
 import { of } from 'rxjs';
@@ -29,6 +30,7 @@ describe('CardReservationComponent', () => {
   let component: CardReservationComponent;
   let fixture: ComponentFixture<CardReservationComponent>;
   let groupOrdersService: jasmine.SpyObj<GroupOrdersService>;
+  let guestInviteService: jasmine.SpyObj<GuestInviteService>;
 
   beforeEach(async () => {
     groupOrdersService = jasmine.createSpyObj<GroupOrdersService>('GroupOrdersService', [
@@ -61,10 +63,15 @@ describe('CardReservationComponent', () => {
         status: 'Open',
       })
     );
+    guestInviteService = jasmine.createSpyObj<GuestInviteService>('GuestInviteService', [
+      'getInviteToken$',
+    ]);
+    guestInviteService.getInviteToken$.and.returnValue(of({ token: 'invite-token' }));
     await TestBed.configureTestingModule({
       providers: [
         { provide: API_BASE_URL, useValue: 'https://test.api' },
         { provide: GroupOrdersService, useValue: groupOrdersService },
+        { provide: GuestInviteService, useValue: guestInviteService },
         {
           provide: ToastService,
           useValue: jasmine.createSpyObj('ToastService', ['success', 'error', 'info']),
@@ -185,7 +192,7 @@ describe('CardReservationComponent', () => {
     fixture.detectChanges();
 
     const banner = fixture.nativeElement.querySelector('.status-banner') as HTMLElement;
-    expect(banner.textContent?.trim()).toBe('Reserved');
+    expect(banner.textContent?.trim()).toContain('Reserved');
     expect(banner.classList).toContain('reserved');
   });
 
@@ -194,8 +201,42 @@ describe('CardReservationComponent', () => {
     fixture.detectChanges();
 
     const banner = fixture.nativeElement.querySelector('.status-banner') as HTMLElement;
-    expect(banner.textContent?.trim()).toBe('Completed');
+    expect(banner.textContent?.trim()).toContain('Completed');
     expect(banner.classList).toContain('completed');
+  });
+
+  it('shows the invite action for a reserved reservation', () => {
+    const inviteButton = [...fixture.nativeElement.querySelectorAll('button')].find(
+      (button: HTMLButtonElement) => button.textContent?.trim() === 'Invite Guests'
+    ) as HTMLButtonElement | undefined;
+
+    expect(inviteButton).toBeDefined();
+    inviteButton?.click();
+    fixture.detectChanges();
+
+    expect(guestInviteService.getInviteToken$).toHaveBeenCalledOnceWith('res-1');
+    expect(fixture.nativeElement.querySelector('button[aria-label="Copy invite link"]')).not.toBeNull();
+  });
+
+  it('does not show the invite action for an in-progress reservation', () => {
+    fixture.componentRef.setInput('r', {
+      ...RESERVATION,
+      status: ReservationStatusCustomer.InProgress,
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).not.toContain('Invite Guests');
+  });
+
+  it('does not show the invite action for a canceled reservation', () => {
+    fixture.componentRef.setInput('r', {
+      ...RESERVATION,
+      status: ReservationStatusCustomer.Cancelled,
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).not.toContain('Invite Guests');
+    expect(fixture.nativeElement.querySelector('app-reservation-invite-modal')).toBeNull();
   });
 
   it('updates the displayed guest count when a group participant leaves', () => {
@@ -211,6 +252,15 @@ describe('CardReservationComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('1 Guest');
+  });
+
+  it('displays the reservation time using a 24-hour clock', () => {
+    const timeDetails = [...fixture.nativeElement.querySelectorAll('.details-line')].find(
+      (line: HTMLElement) => line.querySelector('img')?.getAttribute('src')?.includes('clock-green')
+    )?.querySelector('.details') as HTMLElement;
+
+    expect(timeDetails.textContent).toMatch(/\b\d{2}:\d{2}\s*–\s*\d{2}:\d{2}\b/);
+    expect(timeDetails.textContent).not.toMatch(/\b(?:AM|PM)\b/i);
   });
 
   it('shows Cancelled in a red badge at the upper-right without the trash icon', () => {

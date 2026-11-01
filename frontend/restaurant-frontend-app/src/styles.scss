@@ -56,3 +56,13 @@ body:has(.backdrop .drawer) {
   border: 1px solid color.$blue-400 !important;
   color: color.$blue-400 !important;
 }
+
+@media screen and (max-width: 600px) {
+  .toast-success,
+  .toast-error,
+  .toast-info {
+    margin-top: 72px !important;
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+  }
+}

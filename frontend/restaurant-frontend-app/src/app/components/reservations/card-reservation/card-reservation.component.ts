@@ -20,6 +20,7 @@ import { Roles } from '@app/shared/constants/roles';
 import { CustomSelectComponent } from '@app/shared/custom-components/custom-select/custom-select.component';
 import { ModalComponent } from '@app/shared/custom-components/modal/modal.component';
 import { GroupOrderPageComponent } from '@app/pages/group-order-page/group-order-page.component';
+import { ReservationInviteModalComponent } from '../reservation-invite-modal/reservation-invite-modal.component';
 
 interface ReservationStatusView {
   class: string;
@@ -42,6 +43,7 @@ interface WaiterPreOrderNavigationData {
     PlaceOrderWaiterComponent,
     ModalComponent,
     GroupOrderPageComponent,
+    ReservationInviteModalComponent,
   ],
   templateUrl: './card-reservation.component.html',
   styleUrl: './card-reservation.component.scss',
@@ -90,6 +92,7 @@ export class CardReservationComponent {
   readonly preOrder = output<CreateOrderRequest>();
   readonly showWaiterOrderModal = signal(false);
   readonly showGroupOrderModal = signal(false);
+  readonly showInviteModal = signal(false);
   readonly showCancelReservationDialog = signal(false);
   readonly groupParticipantCount = signal<number | null>(null);
 
@@ -188,6 +191,14 @@ export class CardReservationComponent {
 
   closeGroupOrderModal(): void {
     this.showGroupOrderModal.set(false);
+  }
+
+  openInviteModal(): void {
+    this.showInviteModal.set(true);
+  }
+
+  closeInviteModal(): void {
+    this.showInviteModal.set(false);
   }
 
   openCancelReservationDialog(): void {

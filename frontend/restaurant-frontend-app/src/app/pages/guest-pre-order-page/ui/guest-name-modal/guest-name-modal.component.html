@@ -19,10 +19,19 @@
 
     <div class="field">
         <label class="field-label" for="guestName">Enter Your Name</label>
-        <input id="guestName" type="text" placeholder="e.g. Jonson D." [(ngModel)]="name" (blur)="touched.set(true)"
+        <input id="guestName" type="text" placeholder="e.g. Jonson D." [(ngModel)]="name"
+            (ngModelChange)="touched.set(true)" (blur)="touched.set(true)"
             (keydown.enter)="submit()" autocomplete="name" />
         @if (touched() && !valid()) {
-        <div class="error">Name is required</div>
+            @if (!trimmed()) {
+                <div class="error">Name is required.</div>
+            }
+            @if (tooLong()) {
+                <div class="error">Name must be no more than 9 characters.</div>
+            }
+            @if (hasInvalidCharacters()) {
+                <div class="error">Use Latin letters, spaces, periods, hyphens, or apostrophes only.</div>
+            }
         }
     </div>
 
